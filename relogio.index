@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Horário de Brasília</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            background: url(ChatGPT\ Image\ 2.png) no-repeat center center fixed;
+            background-color: black;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .organiza {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(7, 3, 0, 0.767);
+            padding: 30px 40px;
+            border-radius: 18px;
+            width: 420px;
+        }
+
+        /* DATA E HORA */
+        .datetime {
+            padding: 20px;
+            border-radius: 14px;
+        }
+
+        .hora {
+            font-size: 56px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+        }
+
+        .data,
+        .semana {
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+
+        /* CRONÔMETRO */
+        .cronometro {
+            font-size: 38px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+        }
+
+        .botoes button {
+            padding: 10px 18px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+
+        .play {
+            background: #00ff6a;
+        }
+
+        .pause {
+            background: #f1c40f;
+        }
+
+        .reset {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        /* AVISO ÁGUA */
+        .agua {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(52, 152, 219, 0.3);
+            font-size: 18px;
+            display: none;
+        }
+
+        .agua button {
+            margin-top: 10px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: auto;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.55);
+            width: 100%;
+        }
+
+        .footer h1 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+        }
+
+        .footer p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="organiza">
+        <!-- DATA E HORA -->
+        <div class="container">
+            <div class="datetime">
+                <div class="hora" id="hora">--:--:--</div>
+                <div class="data" id="data">--</div>
+                <div class="semana" id="semana">--</div>
+
+                <div class="agua" id="avisoAgua">
+                    💧 Hora de beber água!
+                    <br />
+                    <button onclick="confirmarAgua()">Bebi água</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRONÔMETRO -->
+        <div class="container">
+            <div class="cronometro" id="cronometro">00:00:00</div>
+            <div class="botoes">
+                <button class="play" onclick="iniciarCronometro()">▶ </button>
+                <button class="pause" onclick="pausarCronometro()">⏸</button>
+                <button class="reset" onclick="resetarCronometro()">⏹</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <h1>O ESTUDO É A ARMA MAIS PODEROSA QUE VOCÊ PODE USAR PARA MUDAR O MUNDO</h1>
+        <p>GCM - GO</p>
+    </footer>
+
+    <script>
+        /* HORÁRIO DE BRASÍLIA */
+        function atualizarHorario() {
+            const agora = new Date();
+
+            document.getElementById('hora').textContent =
+                agora.toLocaleTimeString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo'
+                });
+
+            document.getElementById('data').textContent =
+                agora.toLocaleDateString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+            document.getElementById('semana').textContent =
+                agora.toLocaleDateString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo',
+                    weekday: 'long'
+                });
+        }
+
+        setInterval(atualizarHorario, 1000);
+        atualizarHorario();
+
+        /* CRONÔMETRO */
+        let tempo = 0;
+        let intervalo = null;
+
+        function formatarTempo(seg) {
+            const h = String(Math.floor(seg / 3600)).padStart(2, '0');
+            const m = String(Math.floor((seg % 3600) / 60)).padStart(2, '0');
+            const s = String(seg % 60).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function iniciarCronometro() {
+            if (intervalo) return;
+            intervalo = setInterval(() => {
+                tempo++;
+                cronometro.textContent = formatarTempo(tempo);
+            }, 1000);
+        }
+
+        function pausarCronometro() {
+            clearInterval(intervalo);
+            intervalo = null;
+        }
+
+        function resetarCronometro() {
+            pausarCronometro();
+            tempo = 0;
+            cronometro.textContent = '00:00:00';
+        }
+
+        /* AVISO DE ÁGUA + SOM */
+        const minuto = 60 * 1000;
+        const intervaloAgua = 30 * minuto;
+
+        function tocarSom() {
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.value = 880;
+            gain.gain.value = 0.1;
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.4);
+        }
+
+        setInterval(() => {
+            const aviso = document.getElementById('avisoAgua');
+            aviso.style.display = 'block';
+            tocarSom();
+        }, intervaloAgua);
+
+        function confirmarAgua() {
+            document.getElementById('avisoAgua').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
