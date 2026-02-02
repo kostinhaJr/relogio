@@ -229,7 +229,7 @@
 
         /* AVISO DE ÁGUA + SOM */
         const minuto = 60 * 1000;
-        const intervaloAgua = 30 * minuto;
+        const intervaloAgua = 0.5 * minuto; // 30 segundos para testes
 
         function tocarSom() {
             const ctx = new AudioContext();
@@ -247,14 +247,28 @@
             osc.stop(ctx.currentTime + 0.4);
         }
 
+        let intervaloSomAgua = null;
+
+        /* INTERVALO PRINCIPAL (30 MIN) */
         setInterval(() => {
             const aviso = document.getElementById('avisoAgua');
             aviso.style.display = 'block';
-            tocarSom();
+
+            // evita criar vários intervalos de som
+            if (!intervaloSomAgua) {
+                tocarSom(); // toca imediatamente
+                intervaloSomAgua = setInterval(() => {
+                    tocarSom();
+                }, 5000); // toca a cada 5 segundos
+            }
         }, intervaloAgua);
 
         function confirmarAgua() {
             document.getElementById('avisoAgua').style.display = 'none';
+
+            // para o som
+            clearInterval(intervaloSomAgua);
+            intervaloSomAgua = null;
         }
     </script>
 </body>
