@@ -249,16 +249,33 @@
         }
 
         const minuto = 60 * 1000;
-        const intervaloAgua = 30 * minuto; // 30s para testes
-
-        setInterval(() => {
-            avisoAgua.style.display = 'block';
-
-            if (!intervaloSomAgua) {
+        const intervaloAgua = 30 * minuto;
+        
+        let timeoutAgua = null;
+        
+        function agendarAvisoAgua() {
+            timeoutAgua = setTimeout(() => {
+                avisoAgua.style.display = 'block';
+        
                 tocarSom();
                 intervaloSomAgua = setInterval(tocarSom, 5000);
-            }
-        }, intervaloAgua);
+            }, intervaloAgua);
+        }
+        
+        // inicia a primeira contagem
+        agendarAvisoAgua();
+        
+        function confirmarAgua() {
+            avisoAgua.style.display = 'none';
+        
+            clearInterval(intervaloSomAgua);
+            intervaloSomAgua = null;
+        
+            clearTimeout(timeoutAgua);
+        
+            // reinicia os 30 minutos a partir de agora
+            agendarAvisoAgua();
+        }
 
         function confirmarAgua() {
             avisoAgua.style.display = 'none';
