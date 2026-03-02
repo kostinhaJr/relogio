@@ -22,7 +22,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            background: url(ChatGPT\ Image\ 2.png) no-repeat center center fixed;
+            background: url("ChatGPT Image 2.png") no-repeat center center fixed;
             background-size: cover;
             background-color: black;
             color: #fff;
@@ -164,6 +164,12 @@
     </footer>
 
     <script>
+        const hora = document.getElementById('hora');
+        const data = document.getElementById('data');
+        const semana = document.getElementById('semana');
+        const cronometro = document.getElementById('cronometro');
+        const avisoAgua = document.getElementById('avisoAgua');
+
         /* ================= HORÁRIO ================= */
         function atualizarHorario() {
             const agora = new Date();
@@ -248,40 +254,27 @@
             osc.stop(audioCtx.currentTime + 0.4);
         }
 
-        const minuto = 60 * 1000;
-        const intervaloAgua = 30 * minuto;
-        
-        let timeoutAgua = null;
-        
-        function agendarAvisoAgua() {
-            timeoutAgua = setTimeout(() => {
-                avisoAgua.style.display = 'block';
-        
-                tocarSom();
-                intervaloSomAgua = setInterval(tocarSom, 5000);
-            }, intervaloAgua);
-        }
-        
-        // inicia a primeira contagem
-        agendarAvisoAgua();
-        
         function confirmarAgua() {
             avisoAgua.style.display = 'none';
-        
-            clearInterval(intervaloSomAgua);
-            intervaloSomAgua = null;
-        
-            clearTimeout(timeoutAgua);
-        
-            // reinicia os 30 minutos a partir de agora
-            agendarAvisoAgua();
+
+            if (intervaloSomAgua) {
+                clearInterval(intervaloSomAgua);
+                intervaloSomAgua = null;
+            }
         }
 
-        function confirmarAgua() {
-            avisoAgua.style.display = 'none';
-            clearInterval(intervaloSomAgua);
-            intervaloSomAgua = null;
-        }
+        const minuto = 60 * 1000;
+        const intervaloAgua = 30 * minuto;
+
+        setInterval(() => {
+            avisoAgua.style.display = 'block';
+
+            if (!intervaloSomAgua) {
+                tocarSom();
+                intervaloSomAgua = setInterval(tocarSom, 5000);
+            }
+        }, intervaloAgua);
+
     </script>
 
 </body>
